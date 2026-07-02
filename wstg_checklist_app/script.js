@@ -408,6 +408,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let filteredData = checklistData;
         if (query) {
             filteredData = checklistData.filter(module => {
+                if (module.is_info) return false;
                 const idMatch = module.id.toLowerCase().includes(query);
                 const titleMatch = module.title.toLowerCase().includes(query);
                 const titleDeMatch = module.title_de && module.title_de.toLowerCase().includes(query);
@@ -533,19 +534,35 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
+        let searchSection = null;
+        let searchContent = null;
+        if (query) {
+            searchSection = document.createElement('section');
+            searchSection.className = 'category-section search-results-section';
+            searchContent = document.createElement('div');
+            searchContent.className = 'category-content open';
+            searchContent.style.borderTop = 'none';
+            searchSection.appendChild(searchContent);
+            mainPanel.appendChild(searchSection);
+        }
+
         const categoriesToRender = query ? sortedCategoryNames : [activeCategory].filter(Boolean);
 
         for (const categoryName of categoriesToRender) {
             const modules = categories[categoryName];
-            const section = document.createElement('section');
-            section.className = 'category-section';
-            section.setAttribute('data-category', categoryName);
+            
+            let section = searchSection;
+            let content = searchContent;
+            
+            if (!query) {
+                section = document.createElement('section');
+                section.className = 'category-section';
+                section.setAttribute('data-category', categoryName);
 
-
-
-            // Category Content
-            const content = document.createElement('div');
-            content.className = 'category-content';
+                // Category Content
+                content = document.createElement('div');
+                content.className = 'category-content';
+            }
 
             modules.forEach(module => {
                 const card = document.createElement('div');
@@ -1156,11 +1173,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 content.appendChild(card);
             });
 
-            // Toggle Category Content
-            content.classList.add('open');
+            if (!query) {
+                // Toggle Category Content
+                content.classList.add('open');
 
-            section.appendChild(content);
-            mainPanel.appendChild(section);
+                section.appendChild(content);
+                mainPanel.appendChild(section);
+            }
         }
         updateProgress();
     };
