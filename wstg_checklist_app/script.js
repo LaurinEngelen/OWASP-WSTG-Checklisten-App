@@ -834,7 +834,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const updateModuleStatusFromCheckboxes = () => {
                         const mFindings = state[module.id + '_sysreptor_findings'] || {};
                         const hasChecked = Object.values(mFindings).some(f => f && f.checked);
-                        const newVal = hasChecked ? 'finding' : 'done';
+                        const newVal = hasChecked ? 'finding' : 'pending';
                         state[module.id] = newVal;
 
                         const iconBtns = card.querySelectorAll('.status-icon-btn');
